@@ -1,0 +1,5 @@
+function solution(my_string) {
+    let sum = 0 
+   const nums = my_string.match(/[0-9]+/g);
+       return nums ? nums.map(num => Number(num)).reduce( (a, c) => a + c, 0) : 0;
+}
