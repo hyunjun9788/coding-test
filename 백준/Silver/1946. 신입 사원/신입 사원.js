@@ -7,23 +7,22 @@
     const testCase = Number(input[0])
     let line = 1
 
-    for (let tc = 0; tc < testCase; tc++) {
-        n = Number(input[line])
+    for (let i = 1; i <= testCase; i++) {
+        let n = Number(input[line])
         let arr = []
-        for (let i = line + 1; i <= line + n; i++) {
-            let data = input[i].split(' ').map(Number)
+
+        for (let j = line + 1; j <= line + n; j++) {
+            let data = input[j].split(' ').map(Number)
             arr.push(data)
         }
 
-        arr.sort((x, y) => x[0] - y[0])
-
+        arr.sort((a, b) => a[0] - b[0])
         let count = 0
-        let minValue = 100001
-
+        let maxValue = 100001
         for (let [x, y] of arr) {
-            if (y < minValue) {
-                minValue = y
-                count += 1
+            if (y < maxValue) {
+                count++
+                maxValue = y
             }
         }
 
