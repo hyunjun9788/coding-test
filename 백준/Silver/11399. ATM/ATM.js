@@ -7,16 +7,12 @@
 
     let N = Number(input[0])
     let arr = input[1].split(' ').map(Number)
-    arr.sort((a, b) => a - b)
+    arr.sort((a,b)=>a-b)
 
-
-    let sum = 0
-    let accumulated = 0
-    for (let i = 0; i < N; i++) {
-        accumulated += arr[i]
-        sum += accumulated
+    for (let i = 1; i < N; i++) {
+        arr[i] = arr[i - 1] + arr[i]
     }
 
-
+    let sum = arr.reduce((acc, cur) => acc + cur, 0)
     console.log(sum)
 })();
