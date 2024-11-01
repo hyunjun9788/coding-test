@@ -1,23 +1,14 @@
 (function main() {
-    let isLocal = false;
-    let fs = require("fs");
-    let filePath = isLocal ? "test.txt" : "/dev/stdin";
-    let input = fs.readFileSync(filePath).toString().trim().split("\n");
+    const fs = require("fs");
+    const isLocal = false;
+    const filePath = isLocal ? "t.txt" : "/dev/stdin";
+    const input = fs.readFileSync(filePath).toString().trim().split('\n');
 
-    let N = input[0].split(' ').map(Number)[0]
-    let K = input[0].split(' ').map(Number)[1]
-    
-    const arr = Array.from({ length: N + 1 }, () => 0)
-
-    for (let i = 1; i <= N; i++) {
-        arr[i] = Number(input[i])
+    let [n, k] = input[0].split(' ').map(Number)
+    let result = 0
+    for (let i = n; i >= 1; i--) {
+        result += parseInt(k / input[i])
+        k = k % input[i]
     }
-
-    let cnt = 0
-    for (let i = N; i >= 1; i--) {
-        cnt += parseInt(K / arr[i])
-        K %= arr[i]
-    }
-
-    console.log(cnt)
+    console.log(result)
 })();
