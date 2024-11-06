@@ -1,21 +1,21 @@
 (function main() {
-    let isLocal = false;
-    let fs = require("fs");
-    let filePath = isLocal ? "test.txt" : "/dev/stdin";
-    let input = fs.readFileSync(filePath).toString().trim().split("\n");
+    const fs = require("fs");
+    const isLocal = false;
+    const filePath = isLocal ? "t.txt" : "/dev/stdin";
+    const input = fs.readFileSync(filePath).toString().trim().split('\n');
 
+    let arr = (input[0].split('-'))
 
-    let groups = input[0].split('-')
-    let answer = 0
-    for (let i = 0; i < groups.length; i++) {
-        let cur = groups[i].split('+').map(Number).reduce((a, b) => a + b)
+    let sum = 0
+    for (let i = 0; i < arr.length; i++) {
+
+        let subSum = arr[i].split('+').reduce((acc, cur) => acc + Number(cur), 0);
+
         if (i === 0) {
-            answer += cur
-        }
-        else {
-            answer -= cur
+            sum += subSum;
+        } else {
+            sum -= subSum;
         }
     }
-    console.log(answer)
-
+    console.log(sum)
 })();
