@@ -1,14 +1,16 @@
 function solution(s){
-    let arr = s.split('')
-    let count = 0
-    if(arr[0]===")"|| arr[arr.length-1]==="("){
-            return false
-        }
-    for(let i=0;i<arr.length;i++){
-        arr[i]==="("? count+=1 : count-=1
-        if(count<0){
-            return false
+    const stack = []
+    
+    for(let i=0;i<s.length;i++){
+        if(s[i]==='('){
+            stack.push('(')
+        }else if(s[i] === ')'){
+            if(stack.length ===0){
+                return false
+            }else{
+                stack.pop()
+            }
         }
     }
-            return !count?true:false
-    }
+    return stack.length === 0
+}
