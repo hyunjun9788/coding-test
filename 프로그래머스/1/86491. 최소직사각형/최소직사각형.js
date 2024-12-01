@@ -1,8 +1,13 @@
 function solution(sizes) {
-    let width = []
-    let height = []
-    const sortedArr =sizes.map((v)=>v.sort((a,b)=>a-b))
-    sortedArr.forEach((v)=>width.push(v[0]))
-    sortedArr.forEach((v)=>height.push(v[1]))
-  return Math.max(...width)*Math.max(...height)
+    const sortedSizes = sizes.map((size,i)=>size.sort((a,b)=>b-a))
+    
+    const width = []
+    const height = []
+    for(let i=0;i<sortedSizes.length;i++){
+        width.push(sortedSizes[i][0])
+        height.push(sortedSizes[i][1])
+        
+    }
+    
+    return Math.max(...width) * Math.max(...height)
 }
