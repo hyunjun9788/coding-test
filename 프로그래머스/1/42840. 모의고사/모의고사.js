@@ -1,31 +1,29 @@
 function solution(answers) {
-    var answer = [];
-    
-    const patterns= [
-         [1,2,3,4,5],
-         [2,1,2,3,2,4,2,5],
+    const memberStyle = [
+        [1,2,3,4,5],
+        [2,1,2,3,2,4,2,5],
         [3,3,1,1,2,2,4,4,5,5]
     ]
-
-    const scores = [0,0,0]
     
-    for(const [i,answer] of answers.entries()){
-        for(const [j,pattern] of patterns.entries()){
-            if(answer === pattern[i % pattern.length]){
-                scores[j] +=1
+    const rightArr = []
+  for (let i = 0; i < memberStyle.length; i++) {
+        let right = 0;
+        for (let j = 0; j < answers.length; j++) {
+            if (memberStyle[i][j % memberStyle[i].length] === answers[j]) {
+                right++;
             }
         }
+        rightArr.push(right);
     }
-    
-    const maxScore = Math.max(...scores)
-    
-    const highestScores = []
-    
-    for(let i=0;i<scores.length;i++){
-        if(scores[i] === maxScore){
-            highestScores.push(i+1)
+    let maxValue = Math.max(...rightArr)
+    const result = []
+    for(let i=0;i<rightArr.length;i++){
+        if(rightArr[i]>=maxValue){
+            result.push(i+1)
         }
+  
     }
+
+    return result
     
-    return highestScores;
 }
