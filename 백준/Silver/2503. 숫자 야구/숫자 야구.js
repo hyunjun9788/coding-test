@@ -5,49 +5,64 @@
     let input = fs.readFileSync(filePath).toString().trim().split("\n");
 
     let n = Number(input[0])
-
-    const question = []
-
     let answer = 0
+    const hint = []
 
     for (let i = 1; i <= n; i++) {
-        question.push(input[i].split(' ').map(Number))
+        hint.push(input[i].split(' ').map(Number))
     }
 
-    for (let a = 1; a <= 9; a++) {
-        for (let b = 1; b <= 9; b++) {
-            for (let c = 1; c <= 9; c++) {
-                if (a === b || a === c || b === c) { continue }
+    const checker = (idx, number) => {
+        const _number = hint[idx][0]
+        const _strike = hint[idx][1]
+        const _ball = hint[idx][2]
 
-                let check = 0
+        let strike = 0
+        let ball = 0
 
-                for (const [target, strike, ball] of question) {
-                    const str = '' + target;
-                    const cur = String(a) + String(b) + String(c)
-                    const count = [0, 0]
 
-                    for (let l = 0; l < str.length; l++) {
-                        const index = cur.indexOf(str[l])
+        const _A = Math.floor(_number / 100)
+        const _B = Math.floor((_number % 100) / 10)
+        const _C = _number % 10
 
-                        if (index === l) {
-                            count[0] += 1
-                        } else if (index !== -1) {
-                            count[1] += 1
-                        }
-                    }
-                    if (strike === count[0] && ball === count[1]) {
-                        check += 1
-                    }
-                }
-                if (check === n) {
-                    answer += 1
-                }
-            }
+        const A = Math.floor(number / 100);
+        const B = Math.floor((number % 100) / 10);
+        const C = number % 10;
+
+        if (A === 0 || B === 0 || C === 0) return false;
+        if (A === B || A === C || B === C) return false;
+
+        if (A === _A) strike++;
+        if (B === _B) strike++;
+        if (C === _C) strike++;
+
+
+        if (A === _B || A === _C) ball++;
+        if (B === _A || B === _C) ball++;
+        if (C === _A || C === _B) ball++;
+
+        return strike === _strike && ball === _ball;
+    }
+    const recur = (idx, number) => {
+        if (idx === n) {
+            answer += 1
+            recur(0, number + 1)
+            return
+        }
+
+        if (number === 1000) {
+            return
+        }
+
+        if (checker(idx, number)) {
+            recur(idx + 1, number)
+        } else {
+            recur(0, number + 1)
         }
     }
+
+    recur(0, 100)
     console.log(answer)
 }
-
-
 
 )();
