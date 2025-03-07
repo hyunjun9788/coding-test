@@ -1,16 +1,11 @@
 function solution(brown, yellow) {
-    const sum = brown + yellow;
-    let w, h;
-
-    for (let i = 3; i < sum; i++) {
-        if (sum % i === 0) {
-            w = i;
-            h = Math.floor(sum / i);
-            if ((w - 2) * (h - 2) === yellow) {
-                break;
+    const all = brown + yellow
+    
+    for(let i=3;i<brown;i++){
+        for(let j=i;j>=3;j--){
+            if(all === i*j && (i-2)*(j-2) === yellow){
+                return [i, j]
             }
         }
     }
-
-    return [w, h].sort((a, b) => b - a);
 }
