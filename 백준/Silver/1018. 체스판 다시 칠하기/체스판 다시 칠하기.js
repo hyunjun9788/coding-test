@@ -1,55 +1,63 @@
 (function main() {
-  const fs = require("fs");
-  const isLocal = false;
-  const filePath = isLocal ? "t.txt" : "/dev/stdin";
-  const input = fs.readFileSync(filePath).toString().trim().split("\n");
+  let isLocal = false;
+  let fs = require("fs");
+  let filePath = isLocal ? "t.txt" : "/dev/stdin";
+  let input = fs.readFileSync(filePath).toString().trim().split("\n");
 
   const [n, m] = input[0].split(" ").map(Number);
 
   const W = Array.from({ length: n }, () => []);
   const B = Array.from({ length: n }, () => []);
-  const patterns = [];
+  const allArr = [];
+
+  for (let i = 1; i < input.length; i++) {
+    const row = input[i].trim().split("");
+    allArr.push(row);
+  }
 
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
-      if ((i % 2 === 0 && j % 2 === 0) || (i % 2 === 1 && j % 2 === 1)) {
-        W[i][j] = "W";
-        B[i][j] = "B";
-      }
-      if ((i % 2 === 0 && j % 2 === 1) || (i % 2 === 1 && j % 2 === 0)) {
-        W[i][j] = "B";
-        B[i][j] = "W";
+      if (i % 2 === 0) {
+        if (j % 2 === 0) {
+          W[i][j] = "W";
+          B[i][j] = "B";
+        } else {
+          W[i][j] = "B";
+          B[i][j] = "W";
+        }
+      } else {
+        if (j % 2 === 0) {
+          W[i][j] = "B";
+          B[i][j] = "W";
+        } else {
+          W[i][j] = "W";
+          B[i][j] = "B";
+        }
       }
     }
   }
 
-  let bResult = [];
-  let wResult = [];
+  let min = 64;
+
   for (let i = 0; i <= n - 8; i++) {
     for (let j = 0; j <= m - 8; j++) {
-      const pattern = [];
+      let sumW = 0;
+      let sumB = 0;
 
-      for (let k = 0; k < 8; k++) {
-        pattern.push(input[i + 1 + k].slice(j, j + 8).split(""));
-      }
-      let bCount = 0;
-      let wCount = 0;
-      for (let x = 0; x < 8; x++) {
-        for (let y = 0; y < 8; y++) {
-          if (B[x][y] !== pattern[x][y]) {
-            bCount++;
+      for (let k = i; k < i + 8; k++) {
+        for (let l = j; l < j + 8; l++) {
+          if (allArr[k][l] !== W[k - i][l - j]) {
+            sumW += 1;
           }
-          if (W[x][y] !== pattern[x][y]) {
-            wCount++;
+          if (allArr[k][l] !== B[k - i][l - j]) {
+            sumB += 1;
           }
         }
       }
 
-      bResult.push(bCount);
-      wResult.push(wCount);
-
-      patterns.push(pattern);
+      min = Math.min(min, sumW);
+      min = Math.min(min, sumB);
     }
   }
-  console.log(Math.min(...bResult, ...wResult));
+  console.log(min);
 })();
