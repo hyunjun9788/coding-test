@@ -1,30 +1,28 @@
 (function main() {
-    let isLocal = false;
-    let fs = require("fs");
-    let filePath = isLocal ? "t.txt" : "/dev/stdin";
-    let input = fs.readFileSync(filePath).toString().trim()
+  let isLocal = false;
+  let fs = require("fs");
+  let filePath = isLocal ? "t.txt" : "/dev/stdin";
+  let input = fs.readFileSync(filePath).toString().trim().split("\n");
 
-    let stick = []
-    let cnt = 0
-    let i = 0
+  const parentheses = input[0];
 
-    while (i < input.length) {
-        if (i < input.length - 1 && input[i] === '(' && input[i + 1] === ')') {
-            cnt += stick.length
-            i += 2
-            continue
-        }
+  const stack = [];
+  let answer = 0;
 
-        if (input[i] === '(') {
-            stick.push('(')
-            i++
+  for (let i = 0; i < parentheses.length; i++) {
+    if (parentheses[i] === "(") {
+      stack.push(i);
+    } else {
+      if (stack.length > 0) {
+        if (stack[stack.length - 1] === i - 1) {
+          stack.pop();
+          answer += stack.length;
         } else {
-            stick.pop()
-            cnt++
-            i++
+          stack.pop();
+          answer += 1;
         }
-
+      }
     }
-    console.log(cnt)
-}
-)();
+  }
+  console.log(answer);
+})();
