@@ -1,35 +1,37 @@
 (function main() {
-    let isLocal = false;
-    let fs = require("fs");
-    let filePath = isLocal ? "t.txt" : "/dev/stdin";
-    let input = fs.readFileSync(filePath).toString().trim().split("\n");
+  let isLocal = false;
+  let fs = require("fs");
+  let filePath = isLocal ? "t.txt" : "/dev/stdin";
+  let input = fs.readFileSync(filePath).toString().trim().split("\n");
 
-    const leftStack = input.shift().split('');
-    const N = input.shift();
-    const rightStack = [];
-    for (let i = 0; i < N; i++) {
-        let tmp = input[i].toLowerCase().trim();
-        switch (tmp) {
-            case 'l':
-                if (leftStack.length !== 0) {
-                    rightStack.push(leftStack.pop());
-                }
-                break;
-            case 'd':
-                if (rightStack.length !== 0) {
-                    leftStack.push(rightStack.pop());
-                }
-                break;
-            case 'b':
-                if (leftStack.length !== 0) {
-                    leftStack.pop();
-                }
-                break;
-            default:
-                leftStack.push(tmp.split(' ')[1]);
-                break;
-        }
+  const left = input[0].split("");
+  const right = [];
+
+  for (let i = 2; i < input.length; i++) {
+    const [key, value] = input[i].split(" ");
+
+    if (key === "P") {
+      left.push(value);
     }
 
-    console.log((leftStack.concat(rightStack.reverse())).join(''))
+    if (key === "L") {
+      if (left.length > 0) {
+        const pop = left.pop();
+        right.push(pop);
+      }
+    }
+
+    if (key === "B") {
+      left.pop();
+    }
+
+    if (key === "D") {
+      if (right.length > 0) {
+        const pop = right.pop();
+        left.push(pop);
+      }
+    }
+  }
+
+  console.log([...left, ...right.reverse()].join(""));
 })();
