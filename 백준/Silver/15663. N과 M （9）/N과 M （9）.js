@@ -38,6 +38,6 @@
     }
   }
 
-  recur(0);
+  recur();
   console.log(answer);
 })();
