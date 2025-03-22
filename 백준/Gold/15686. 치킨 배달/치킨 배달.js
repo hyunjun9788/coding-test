@@ -6,47 +6,41 @@
 
   const [n, m] = input[0].split(" ").map(Number);
 
-  const arr = [];
+  const home = [];
   const chickens = [];
-  const houses = [];
-  const selected = [];
+  const allCity = [];
 
   for (let i = 1; i <= n; i++) {
-    arr.push(input[i].split(" ").map(Number));
+    allCity.push(input[i].split(" ").map(Number));
   }
 
-  for (let i = 0; i < arr.length; i++) {
-    for (let j = 0; j < arr[i].length; j++) {
-      if (arr[i][j] === 2) {
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (allCity[i][j] === 1) {
+        home.push([i, j]);
+      }
+      if (allCity[i][j] === 2) {
         chickens.push([i, j]);
       }
     }
   }
 
-  for (let i = 0; i < arr.length; i++) {
-    for (let j = 0; j < arr[i].length; j++) {
-      if (arr[i][j] === 1) {
-        houses.push([i, j]);
-      }
-    }
-  }
-
-  let ans = 20000;
-
+  const selectedChickens = [];
+  let answer = 9999;
   function recur(index) {
-    if (selected.length === m) {
-      let cityDist = 0;
-      for (let i = 0; i < houses.length; i++) {
-        let minDist = 100;
-        for (let j = 0; j < selected.length; j++) {
-          const nowDist =
-            Math.abs(houses[i][0] - selected[j][0]) + Math.abs(houses[i][1] - selected[j][1]);
-
-          minDist = Math.min(minDist, nowDist);
+    if (selectedChickens.length === m) {
+      let allMinDist = 0;
+      for (let i = 0; i < home.length; i++) {
+        let minDist = 9999;
+        for (let j = 0; j < selectedChickens.length; j++) {
+          const dist =
+            Math.abs(home[i][0] - selectedChickens[j][0]) +
+            Math.abs(home[i][1] - selectedChickens[j][1]);
+          minDist = Math.min(dist, minDist);
         }
-        cityDist += minDist;
+        allMinDist += minDist;
       }
-      ans = Math.min(ans, cityDist);
+      answer = Math.min(allMinDist, answer);
       return;
     }
 
@@ -54,13 +48,12 @@
       return;
     }
 
-    selected.push(chickens[index]);
+    selectedChickens.push(chickens[index]);
     recur(index + 1);
-    selected.pop();
+    selectedChickens.pop();
     recur(index + 1);
   }
 
   recur(0);
-
-  console.log(ans);
+  console.log(answer);
 })();
