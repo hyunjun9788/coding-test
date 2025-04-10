@@ -4,121 +4,87 @@
   let filePath = isLocal ? "t.txt" : "/dev/stdin";
   let input = fs.readFileSync(filePath).toString().trim().split("\n");
 
-  const [n, m] = input.shift().split(" ").map(Number);
-  const map = input.map((v) => v.split(" ").map(Number));
+  const [n, m] = input[0].split(" ").map(Number);
+  const office = [];
   const cameras = [];
-  const CHECK_VALUE = 10;
-  let answer = Infinity;
+
+  const dx = [0, -1, 0, 1];
+  const dy = [-1, 0, 1, 0];
+
+  const dir = Array.from({ length: 6 }, () => []);
+
+  dir[1] = [0];
+  dir[2] = [0, 2];
+  dir[3] = [0, 1];
+  dir[4] = [0, 1, 2];
+  dir[5] = [0, 1, 2, 3];
+
+  for (let i = 1; i <= n; i++) {
+    office.push(input[i].split(" ").map(Number));
+  }
 
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < m; j++) {
-      if (map[i][j] !== 0 && map[i][j] !== 6) {
-        cameras.push([i, j, map[i][j]]);
+      if (office[i][j] !== 0 && office[i][j] !== 6) {
+        cameras.push([i, j]);
       }
     }
   }
 
-  function camOn(x, y, dir, map, isCheck) {
-    const direction = [
-      [-1, 0],
-      [1, 0],
-      [0, -1],
-      [0, 1],
-    ];
+  let answer = 64;
 
-    for (const myDir of dir) {
-      let [nextX, nextY] = [x + direction[myDir][0], y + direction[myDir][1]];
-
-      while (nextX >= 0 && nextX < n && nextY >= 0 && nextY < m && map[nextX][nextY] !== 6) {
-        map[nextX][nextY] += isCheck;
-        [nextX, nextY] = [nextX + direction[myDir][0], nextY + direction[myDir][1]];
-      }
-    }
-  }
-
-  function findAnswer(map) {
-    let result = 0;
-    for (let i = 0; i < n; i++) {
-      for (let j = 0; j < m; j++) {
-        if (map[i][j] === 0) {
-          result++;
+  function recur(index) {
+    if (index === cameras.length) {
+      let cnt = 0;
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+          if (office[i][j] === 0) {
+            cnt += 1;
+          }
         }
       }
-    }
-    return result;
-  }
 
-  function combination(cams, index, map) {
-    if (index === cams.length) {
-      const result = findAnswer(map);
-      answer = Math.min(result, answer);
+      answer = Math.min(cnt, answer);
       return;
     }
 
-    const [x, y, type] = cams[index];
+    const cameraType = office[cameras[index][0]][cameras[index][1]];
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < dir[cameraType].length; j++) {
+        let nx = cameras[index][0] + dx[Math.floor((dir[cameraType][j] + i) % 4)];
+        let ny = cameras[index][1] + dy[Math.floor((dir[cameraType][j] + i) % 4)];
 
-    if (type === 1) {
-      camOn(x, y, [2], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [2], map, -CHECK_VALUE);
+        while (nx >= 0 && nx < n && ny >= 0 && ny < m) {
+          if (office[nx][ny] === 6) break;
+          if (office[nx][ny] <= 0) {
+            office[nx][ny] -= 1;
+          }
 
-      camOn(x, y, [3], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [3], map, -CHECK_VALUE);
+          nx += dx[Math.floor((dir[cameraType][j] + i) % 4)];
+          ny += dy[Math.floor((dir[cameraType][j] + i) % 4)];
+        }
+      }
 
-      camOn(x, y, [0], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [0], map, -CHECK_VALUE);
+      recur(index + 1);
 
-      camOn(x, y, [1], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [1], map, -CHECK_VALUE);
-    } else if (type === 2) {
-      camOn(x, y, [2, 3], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [2, 3], map, -CHECK_VALUE);
+      for (let j = 0; j < dir[cameraType].length; j++) {
+        let nx = cameras[index][0] + dx[Math.floor((dir[cameraType][j] + i) % 4)];
+        let ny = cameras[index][1] + dy[Math.floor((dir[cameraType][j] + i) % 4)];
 
-      camOn(x, y, [0, 1], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [0, 1], map, -CHECK_VALUE);
-    } else if (type === 3) {
-      camOn(x, y, [0, 3], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [0, 3], map, -CHECK_VALUE);
+        while (nx >= 0 && nx < n && ny >= 0 && ny < m) {
+          if (office[nx][ny] === 6) break;
 
-      camOn(x, y, [1, 3], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [1, 3], map, -CHECK_VALUE);
+          if (office[nx][ny] <= 0) {
+            office[nx][ny] += 1;
+          }
 
-      camOn(x, y, [1, 2], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [1, 2], map, -CHECK_VALUE);
-
-      camOn(x, y, [0, 2], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [0, 2], map, -CHECK_VALUE);
-    } else if (type === 4) {
-      camOn(x, y, [0, 1, 3], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [0, 1, 3], map, -CHECK_VALUE);
-
-      camOn(x, y, [1, 2, 3], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [1, 2, 3], map, -CHECK_VALUE);
-
-      camOn(x, y, [0, 1, 2], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [0, 1, 2], map, -CHECK_VALUE);
-
-      camOn(x, y, [0, 2, 3], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [0, 2, 3], map, -CHECK_VALUE);
-    } else {
-      camOn(x, y, [0, 1, 2, 3], map, CHECK_VALUE);
-      combination(cams, index + 1, map);
-      camOn(x, y, [0, 1, 2, 3], map, -CHECK_VALUE);
+          nx += dx[Math.floor((dir[cameraType][j] + i) % 4)];
+          ny += dy[Math.floor((dir[cameraType][j] + i) % 4)];
+        }
+      }
     }
   }
-  combination(cameras, 0, map);
+
+  recur(0);
   console.log(answer);
 })();
