@@ -1,33 +1,31 @@
 (function main() {
-  const fs = require("fs");
-  const isLocal = false;
-  const filePath = isLocal ? "t.txt" : "/dev/stdin";
-  const input = fs.readFileSync(filePath).toString().trim().split('\n');
+  let isLocal = false;
+  let fs = require("fs");
+  let filePath = isLocal ? "t.txt" : "/dev/stdin";
+  let input = fs.readFileSync(filePath).toString().trim().split("\n");
 
   class Queue {
     constructor() {
-      this.items = [];
       this.front = 0;
       this.rear = 0;
+      this.storage = {};
     }
 
-    enqueue(element) {
-      this.items[this.rear] = element;
+    enqueue(item) {
+      this.storage[this.rear] = item;
       this.rear++;
     }
 
     dequeue() {
-      if (this.isEmpty()) {
-        return null;
-      }
-      const item = this.items[this.front];
-      delete this.items[this.front];
+      let removed = this.storage[this.front];
+      delete this.storage[this.front];
       this.front++;
-      return item;
-    }
 
-    isEmpty() {
-      return this.front === this.rear;
+      if (this.front === this.rear) {
+        this.front = 0;
+        this.rear = 0;
+      }
+      return removed;
     }
 
     size() {
@@ -35,67 +33,70 @@
     }
   }
 
-  const [m, n] = input[0].split(' ').map(Number)
+  const [n, m] = input[0].split(" ").map(Number);
+  const arr = [];
+  const check = Array.from({ length: m }, () => Array(n).fill(false));
 
-  const graph = []
-  const visited = Array.from({ length: n }, () => Array(m).fill(false))
-  let isAllRipe = true
-
-  for (let i = 1; i < input.length; i++) {
-    graph.push(input[i].split(' ').map(Number))
+  for (let i = 1; i <= m; i++) {
+    arr.push(input[i].split(" ").map(Number));
   }
 
-  const dx = [-1, 0, 0, 1]
-  const dy = [0, 1, -1, 0]
+  const dx = [-1, 0, 1, 0];
+  const dy = [0, 1, 0, -1];
 
-  const bfs = (ripen) => {
-    const queue = new Queue()
-    for (const ripe of ripen) {
-      queue.enqueue(ripe);
+  function bfs() {
+    const queue = new Queue();
+
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < n; j++) {
+        if (arr[i][j] === 1) {
+          queue.enqueue([i, j]);
+          check[i][j] = true;
+        }
+      }
     }
 
-    while (!queue.isEmpty()) {
-      const [y, x] = queue.dequeue()
-      for (let i = 0; i < 4; i++) {
-        const nx = dx[i] + x
-        const ny = dy[i] + y
+    while (queue.size() >= 0) {
+      if (queue.size() === 0) {
+        break;
+      }
+      const [x, y] = queue.dequeue();
 
-        if (ny >= 0 && ny < n && nx >= 0 && nx < m && graph[ny][nx] === 0 && !visited[ny][nx]) {
-          queue.enqueue([ny, nx])
-          visited[ny][nx] = true
-          graph[ny][nx] = graph[y][x] + 1
+      for (let i = 0; i < 4; i++) {
+        const nx = x + dx[i];
+        const ny = y + dy[i];
+
+        if (nx >= 0 && nx < m && ny >= 0 && ny < n) {
+          if (arr[nx][ny] === -1 && arr[nx][ny] !== 0) continue;
+          if (!check[nx][ny]) {
+            arr[nx][ny] = arr[x][y] + 1;
+            check[nx][ny] = true;
+            queue.enqueue([nx, ny]);
+          }
         }
       }
     }
   }
 
-  const ripen = []
-  for (let y = 0; y < n; y++) {
-    for (let x = 0; x < m; x++) {
-      if (graph[y][x] === 1 && !visited[y][x]) {
-        ripen.push([y, x])
-        visited[y][x] = true
+  bfs();
+  let answer = 0;
+
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      if (arr[i][j] === 0) {
+        answer = -1;
+        break;
       }
-      if (graph[y][x] !== 1) {
-        isAllRipe = false
-      }
+      answer = Math.max(answer, arr[i][j]);
+    }
+    if (answer === -1) {
+      break;
     }
   }
 
-  if (isAllRipe) {
-    console.log(0)
-    return
+  if (answer !== -1) {
+    console.log(answer - 1);
+  } else {
+    console.log(answer);
   }
-
-  bfs(ripen)
-
-  let minDay = 0
-  for (let i = 0; i < graph.length; i++) {
-    if (graph[i].includes(0)) {
-      console.log(-1)
-      return
-    }
-    minDay = Math.max(...graph[i], minDay)
-  }
-  console.log(minDay - 1)
 })();
