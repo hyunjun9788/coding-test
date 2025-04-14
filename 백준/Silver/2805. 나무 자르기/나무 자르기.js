@@ -1,26 +1,31 @@
-let fs = require('fs')
-let input = fs.readFileSync('/dev/stdin').toString().split('\n');
+(function main() {
+  let isLocal = false;
+  let fs = require("fs");
+  let filePath = isLocal ? "t.txt" : "/dev/stdin";
+  let input = fs.readFileSync(filePath).toString().trim().split("\n");
 
-let [x,y] = input[0].split(' ').map(Number)
-let arr = input[1].split(' ')
-let start=0
-let end = arr.reduce((a,b)=>Math.max(a,b))
+  const [n, m] = input[0].split(" ").map(Number);
+  const trees = input[1].split(" ").map(Number);
 
-let result = 0
-while(start<=end){
-    let mid = parseInt((start+end)/2)
-    let total = 0
-    for(a of arr){
-        if(a>mid){
-            total += a-mid
-        } 
+  let l = 0;
+  let r = 1000000000;
+
+  while (l <= r) {
+    let sum = 0;
+    let mid = Math.floor((l + r) / 2);
+
+    for (let i = 0; i < trees.length; i++) {
+      if (trees[i] > mid) {
+        sum += trees[i] - mid;
+      }
     }
-    if(total < y){
-        end=mid-1
+
+    if (sum >= m) {
+      l = mid + 1;
+    } else {
+      r = mid - 1;
     }
-    else{
-        result = mid;
-        start = mid + 1
-        }
-}
-console.log(result)
+  }
+
+  console.log(r);
+})();
