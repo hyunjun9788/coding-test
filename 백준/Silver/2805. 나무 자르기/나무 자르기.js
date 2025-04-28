@@ -11,11 +11,11 @@
   let r = 1000000000;
 
   while (l <= r) {
-    let sum = 0;
     let mid = Math.floor((l + r) / 2);
+    let sum = 0;
 
     for (let i = 0; i < trees.length; i++) {
-      if (trees[i] > mid) {
+      if (mid < trees[i]) {
         sum += trees[i] - mid;
       }
     }
