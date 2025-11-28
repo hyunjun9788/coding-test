@@ -1,38 +1,51 @@
 function solution(s) {
-    const n = s.length
+    const arr = s.split('')
     let answer = 0
     
-    for(let i=0; i<s.length;i++){
-        const stack = []
-        let isCorrect = true
-        
-        for(let j=0;j<n;j++){
-            const c = s[(i+j) % n]
-            
-            if(c==='[' || c==='(' || c==='{'){
-                stack.push(c)
-            }else{
-                if(stack.length ===0){
-                    isCorrect = false
-                    break
+    for(let i=0;i<arr.length;i++){
+      let stack = []
+        for(let j=0;j<arr.length;j++){
+            if(arr[j] === '['){
+                stack.push('[')
+                continue
+            }else if(arr[j] ===']'){
+                if(stack[stack.length-1] === '['){
+                    stack.pop()
+                    continue
                 }
-                
-                const top = stack[stack.length - 1]
-                if(c==="]" && top ==="["){
+                    stack.push(']')
+            }
+            else if(arr[j] ==='('){
+                stack.push('(')
+                continue
+            }else if(arr[j] === ')'){
+                if(stack[stack.length-1] === '('){
                     stack.pop()
-                }else if(c===")" && top=== "("){
-                    stack.pop()
-                }else if(c==="}" && top=== "{"){
-                    stack.pop()
-                }else{
-                    isCorrect = false
-                    break
+                    continue
                 }
-        }
-    }
-            if(isCorrect && stack.length === 0) {
-                answer += 1
+                    stack.push(')')
+            }else if(arr[j] === '{'){
+                    stack.push('{')
+                    continue
+            }else if(arr[j] === '}'){
+                if(stack[stack.length-1] === '{'){
+                    stack.pop()
+                    continue
+                }
+                    stack.push('{')
             }
         }
-            return answer
+        if(stack.length === 0){
+            answer += 1
+        }
+       const top = arr.shift()
+        arr.push(top)
+        
+    }
+    return answer
 }
+
+
+
+
+
