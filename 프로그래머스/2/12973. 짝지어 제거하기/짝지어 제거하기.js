@@ -1,20 +1,22 @@
 function solution(s)
 {
     const stack = []
+    const arr = s.split('')
     
-    for(let i=0;i<=s.length;i++){
-
-        const top = stack[stack.length-1]
-        if(s[i] === top){
-            stack.pop()
+    for(let i=0;i<s.length;i++){
+        const peek = arr.pop()
+    
+        if(stack[stack.length-1] !== peek){
+            stack.push(peek)
         }else{
-            stack.push(s[i])
+            stack.pop()
         }
-        
     }
-    if(!stack.length){
+    if(stack.length===0){
         return 1
     }else{
         return 0
     }
+  
+    
 }
