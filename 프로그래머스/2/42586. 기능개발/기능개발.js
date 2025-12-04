@@ -1,24 +1,27 @@
 function solution(progresses, speeds) {
-    const workDay = []
-    for(let i=0;i<progresses.length;i++){
-        workDay.push(Math.ceil((100-progresses[i])/speeds[i]))
+  const days = progresses.map((p, i) =>
+    Math.ceil((100 - p) / speeds[i])
+  );
+console.log(days)
+  const result = [];
+
+  let 기준 = days[0];
+  let count = 1;
+
+  for (let i = 1; i < days.length; i++) {
+    // 같이 배포 가능
+    if (days[i] <= 기준) {
+      count++;
     }
-    
-    let first = workDay[0]
-      const result = []
-      let count = 0
-   
-      for(let i=0;i<workDay.length;i++){
-          if(workDay[i]>first){
-              result.push(count)
-              first = workDay[i]
-              count=1
-          }
-          else{
-              count++
-          }
+    // 새 배포
+    else {
+      result.push(count);
+      기준 = days[i];
+      count = 1;
     }
-           result.push(count)
-           return result
+  }
+
+  result.push(count);
+
+  return result;
 }
-    
